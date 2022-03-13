@@ -4,3 +4,22 @@
     -webkit-user-select: none
     -ms-user-select: none
     user-select: none
+    ::-webkit-scrollbar 
+        width: 10px
+    ::-webkit-scrollbar-track 
+        background: #41bf82
+    ::-webkit-scrollbar-thumb 
+        background: #41bf82
+        transition: .5s
+        &:hover 
+            background: #41bf82
+    #main-box::-webkit-scrollbar-track , #main-box::-webkit-scrollbar-corner
+        background: white !important
+        border-radius: 0.3vw
+    #main-box::-webkit-scrollbar-thumb 
+        border-radius: 0.3vw
+        background: #41bf82 !important
+        -webkit-transition: .5s !important
+        transition: .5s !important
+    #main-box::-webkit-scrollbar-thumb:hover
+        background: #41bf82 !important
