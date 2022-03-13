@@ -1,37 +1,31 @@
 <template>
-    <div @click="checkname" id="main-box" class="absolute left-[50%] -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
-        
+    <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
+        <div class="w-[10000px] h-[10000px] p-[20px]">
+            <div class="w-[200px] h-[300px] bg-blue-300">
+
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import datas from '../data.json'
+
 export default {
     components: {
     },
     data() {
         return {
-           id: 0,
-           tables: [],
-           table: {
-               index: 0,
-               title: '',
-               values: [],
-           },
-           value: {
-               name: '',
-               type: '',
-               maxLen: '',
-           },
+           data: datas,
         }
     },
     methods: {
         checkname() {
             if (document.getElementById('plus-info').classList.contains('on')) {
-                this.table.index = this.id;
-                this.table.title = 'test';
-                this.table.value = [1, 2, 3, 4];
-                console.log(this.table)
-                this.id++;
+                console.log(this.data)
+                document.getElementById('main-box').onmousedown = function(e) {
+                    console.log([e.clientX, e.clientY])
+                }
             }
             else if (document.getElementById('trash-info').classList.contains('on')) {
                 console.log('2')
@@ -43,6 +37,10 @@ export default {
                 console.log('4')
             }
         }
+    },
+    mounted() {
+        document.getElementById('main-box').scrollTop = 5000;
+        document.getElementById('main-box').scrollLeft = 5000;
     }
 }
 </script>
