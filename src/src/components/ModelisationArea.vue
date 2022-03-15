@@ -1,14 +1,14 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
         <div @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
-            <div v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-green-400 overflow-hidden overflow-y-auto" :class="[table.top, table.left]">
+            <div v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-green-400 overflow-hidden overflow-y-auto" :class="[table.top, table.left]" :id="['table-'+table.id]">
                 <div class="flex justify-center">
                     <input v-model="table.title" class="p-1 mt-10 w-[70%]">
                 </div>
                 <h2 class="pt-[10px] ml-[20px] text-[25px]">Datas</h2>
-                <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]">
-                    <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]">
-                    <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]">
+                <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
+                    <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]" :value="data.pk" @click="checkkeys(table.id, data.index, 0)">
+                    <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]" :value="data.fk" @click="checkkeys(table.id, data.index, 1)">
                     <input v-model="data.content" class="p-1">
                 </div>
                 <button class="m-[20px] ">Add data</button>
@@ -35,57 +35,46 @@ export default {
            tables: [
                {
                    id: 0,
-                   title: "hello",
+                   title: "test",
                    top: "mt-[30px]",
                    left: "ml-[100px]",
+                   pk: false,
                    data: [
                        {
-                           type: "ok",
-                           content: '',
+                           index: 0,
+                           name: '',
+                           fk: false, 
+                           pk: false,
                        },
                        {
-                           type: "ok",
-                           content: '',
+                           index: 1,
+                           name: '',
+                           fk: false, 
+                           pk: false,
                        },
                        {
-                           type: "ok",
-                           content: '',
+                           index: 2,
+                           name: '',
+                           fk: false, 
+                           pk: false,
                        },
                        {
-                           type: "ok",
-                           content: '',
+                           index: 3,
+                           name: '',
+                           fk: false, 
+                           pk: false,
                        },
                        {
-                           type: "ok",
-                           content: '',
+                           index: 4,
+                           name: '',
+                           fk: false, 
+                           pk: false,
                        },
                        {
-                           type: "ok",
-                           content: '',
-                       },
-                       {
-                           type: "ok",
-                           content: '',
-                       },
-                       {
-                           type: "ok",
-                           content: '',
-                       },
-                       {
-                           type: "ok",
-                           content: '',
-                       },
-                       {
-                           type: "ok",
-                           content: '',
-                       },
-                       {
-                           type: "ok",
-                           content: '',
-                       },
-                       {
-                           type: "ok",
-                           content: '',
+                           index: 5,
+                           name: '',
+                           fk: false, 
+                           pk: false,
                        }
                    ]
                }
@@ -133,6 +122,19 @@ export default {
                 let wy = (y - this.drag.startY) * 3;
                 element.scrollLeft = this.drag.scrollLeft - wx;
                 element.scrollTop = this.drag.scrollTop - wy;
+            }
+        },
+        checkkeys(tableid, dataindex, type) {
+            const allvalues = document.getElementById('table-'+tableid).querySelectorAll('input')
+            const boxvalues = document.getElementById('box-'+dataindex+'-'+tableid).querySelectorAll('input')
+            if (type === 0) {
+                boxvalues[1].value = 'on'
+                boxvalues[0].value = 'off'
+            }
+            else {
+                boxvalues[1].value == true ? boxvalues[0].value = false : boxvalues[0].value = true
+                console.log(boxvalues[0].value)
+                console.log(boxvalues[1].value)
             }
         }
     },
