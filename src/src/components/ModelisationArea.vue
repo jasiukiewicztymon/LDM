@@ -1,14 +1,17 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
-        <div @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[10000px] h-[10000px] p-[20px]">
-            <div v-for="table in this.tables" :key="table.id" class="w-[250px] h-[350px] bg-green-400 overflow-hidden overflow-y-auto">
-                <h1 class="flex justify-center pt-5">
-                    <input v-model="table.title" class="p-1">
-                </h1>
-                <h2 class="pt-[10px] ml-[20px] text-white">Datas</h2>
-                <div v-for="data in table.data" :key="data.id" class="flex justify-center pt-3">
+        <div @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
+            <div v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-green-400 overflow-hidden overflow-y-auto" :class="[table.top, table.left]">
+                <div class="flex justify-center">
+                    <input v-model="table.title" class="p-1 mt-10 w-[70%]">
+                </div>
+                <h2 class="pt-[10px] ml-[20px] text-[25px]">Datas</h2>
+                <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]">
+                    <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]">
+                    <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]">
                     <input v-model="data.content" class="p-1">
                 </div>
+                <button class="m-[20px] ">Add data</button>
             </div>
         </div>
     </div>
@@ -33,6 +36,8 @@ export default {
                {
                    id: 0,
                    title: "hello",
+                   top: "mt-[30px]",
+                   left: "ml-[100px]",
                    data: [
                        {
                            type: "ok",
@@ -106,8 +111,8 @@ export default {
             }
         },
         replace() {
-            document.getElementById('main-box').scrollTop = 5000;
-            document.getElementById('main-box').scrollLeft = 5000;
+            document.getElementById('main-box').scrollTop = 50000;
+            document.getElementById('main-box').scrollLeft = 50000;
         },
         mousedown(e) {
             let element = document.getElementById('main-box');
