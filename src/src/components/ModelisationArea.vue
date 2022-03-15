@@ -1,33 +1,95 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
         <div @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[10000px] h-[10000px] p-[20px]">
-            <div class="absolute top-[5000px] left-[20px] w-[100px] h-[100px] bg-red-100"></div>
+            <div v-for="table in this.tables" :key="table.id" class="w-[250px] h-[350px] bg-green-400 overflow-hidden overflow-y-auto">
+                <h1 class="flex justify-center pt-5">
+                    <input v-model="table.title" class="p-1">
+                </h1>
+                <h2 class="pt-[10px] ml-[20px] text-white">Datas</h2>
+                <div v-for="data in table.data" :key="data.id" class="flex justify-center pt-3">
+                    <input v-model="data.content" class="p-1">
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import datas from '../data.json'
+/* eslint-disable */
 
 export default {
     components: {
     },
     data() {
         return {
-           data: datas,
            drag: {
                isDown: false,
                startX: 0,
                startY: 0,
                scrollLeft: 0,
                scrollTop: 0,
-           }
+           },
+           tables: [
+               {
+                   id: 0,
+                   title: "hello",
+                   data: [
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       },
+                       {
+                           type: "ok",
+                           content: '',
+                       }
+                   ]
+               }
+           ]
         }
     },
     methods: {
         checkname() {
             if (document.getElementById('plus-info').classList.contains('on')) {
-                console.log(this.data)
                 document.getElementById('main-box').onmousedown = function(e) {
                     console.log(e.offsetX)
                     console.log(e.offsetY)
@@ -62,7 +124,7 @@ export default {
                 e.preventDefault();
                 let x = e.pageX - element.offsetLeft;
                 let y = e.pageY - element.offsetTop;
-                let wx = (x - this.drag.startX) * 3;
+                let wx = (x - this.drag.startX) * 2;
                 let wy = (y - this.drag.startY) * 3;
                 element.scrollLeft = this.drag.scrollLeft - wx;
                 element.scrollTop = this.drag.scrollTop - wy;
@@ -70,11 +132,10 @@ export default {
         }
     },
     created() {
-        window.addEventListener('load', this.replace)
-    },
+        window.addEventListener('load', this.replace);
+    }
 }
 </script>
-
 
 <style lang="sass" scoped>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap')
