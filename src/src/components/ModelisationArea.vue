@@ -5,13 +5,14 @@
                 <div class="flex justify-center">
                     <input v-model="table.title" class="p-1 mt-10 w-[70%]">
                 </div>
-                <h2 class="pt-[10px] ml-[20px] text-[25px]">Datas</h2>
+                <h2 class="pt-[30px] ml-[20px] text-[25px]">Datas</h2>
                 <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
                     <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
                     <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
-                    <input v-model="data.name" class="p-1">
+                    <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
+                    <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"></button>
                 </div>
-                <button class="m-[20px] ">Add data</button>
+                <div class="m-[20px]" @click="addval(table.id)">Add data</div>
             </div>
         </div>
     </div>
@@ -32,47 +33,18 @@ export default {
                scrollLeft: 0,
                scrollTop: 0,
            },
+           index: 1,
            tables: [
                {
                    id: 0,
-                   title: "test",
+                   index: 1,
+                   title: "Title",
                    top: "mt-[30px]",
                    left: "ml-[100px]",
-                   pk: false,
                    data: [
                        {
                            index: 0,
-                           name: 'string',
-                           fk: false, 
-                           pk: false,
-                       },
-                       {
-                           index: 1,
-                           name: '',
-                           fk: false, 
-                           pk: false,
-                       },
-                       {
-                           index: 2,
-                           name: '',
-                           fk: false, 
-                           pk: false,
-                       },
-                       {
-                           index: 3,
-                           name: '',
-                           fk: false, 
-                           pk: false,
-                       },
-                       {
-                           index: 4,
-                           name: '',
-                           fk: false, 
-                           pk: false,
-                       },
-                       {
-                           index: 5,
-                           name: '',
+                           name: 'hello world',
                            fk: false, 
                            pk: false,
                        }
@@ -82,11 +54,37 @@ export default {
         }
     },
     methods: {
+        addval(id) {
+            this.tables[id].data.push({
+                index: this.tables[id].index,
+                name: '',
+                fk: false,
+                pk: false
+            })
+            this.tables[id].index++;
+        },
         checkname() {
             if (document.getElementById('plus-info').classList.contains('on')) {
                 document.getElementById('main-box').onmousedown = function(e) {
-                    console.log(e.offsetX)
-                    console.log(e.offsetY)
+                    let left = 'ml-['+e.offsetX+']', top = 'mt-['+e.offsetY+']'
+                    
+                    this.tables.push({
+                        id: this.index,
+                        index: 1,
+                        title: "Title",
+                        top: top,
+                        left: left,
+                        data: [
+                            {
+                                index: 0,
+                                name: 'hello world',
+                                fk: false, 
+                                pk: false,
+                            }
+                        ]
+                    })
+
+                    this.index++;
                 }
             }
             else if (document.getElementById('trash-info').classList.contains('on')) {
@@ -118,8 +116,8 @@ export default {
                 e.preventDefault();
                 let x = e.pageX - element.offsetLeft;
                 let y = e.pageY - element.offsetTop;
-                let wx = (x - this.drag.startX) * 2;
-                let wy = (y - this.drag.startY) * 3;
+                let wx = (x - this.drag.startX);
+                let wy = (y - this.drag.startY);
                 element.scrollLeft = this.drag.scrollLeft - wx;
                 element.scrollTop = this.drag.scrollTop - wy;
             }
@@ -159,4 +157,11 @@ export default {
         #main-box
             border: 0.25vw solid #000
             border-radius: 1vw
+        .deldatabtn
+            background-image: url('../assets/trash.svg')   
+            background-repeat: no-repeat
+            width: 30px
+            height: 30px
+            bottom: -17.5px
+            position: relative
 </style>
