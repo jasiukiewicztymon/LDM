@@ -7,9 +7,9 @@
                 </div>
                 <h2 class="pt-[10px] ml-[20px] text-[25px]">Datas</h2>
                 <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
-                    <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]" :value="data.pk" @click="checkkeys(table.id, data.index, 0)">
-                    <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]" :value="data.fk" @click="checkkeys(table.id, data.index, 1)">
-                    <input v-model="data.content" class="p-1">
+                    <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
+                    <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
+                    <input v-model="data.name" class="p-1">
                 </div>
                 <button class="m-[20px] ">Add data</button>
             </div>
@@ -42,7 +42,7 @@ export default {
                    data: [
                        {
                            index: 0,
-                           name: '',
+                           name: 'string',
                            fk: false, 
                            pk: false,
                        },
@@ -125,16 +125,20 @@ export default {
             }
         },
         checkkeys(tableid, dataindex, type) {
-            const allvalues = document.getElementById('table-'+tableid).querySelectorAll('input')
-            const boxvalues = document.getElementById('box-'+dataindex+'-'+tableid).querySelectorAll('input')
             if (type === 0) {
-                boxvalues[1].value = 'on'
-                boxvalues[0].value = 'off'
+                if (this.tables[tableid].data[dataindex].pk == false)
+                    this.tables[tableid].data[dataindex].fk = false
+
+                if (this.tables[tableid].data[dataindex].pk == false) {
+                    for (let i = 0; i < this.tables[tableid].data.length; i++) {
+                        if (i != dataindex)
+                            this.tables[tableid].data[i].pk = false
+                    }
+                }
             }
             else {
-                boxvalues[1].value == true ? boxvalues[0].value = false : boxvalues[0].value = true
-                console.log(boxvalues[0].value)
-                console.log(boxvalues[1].value)
+                if (this.tables[tableid].data[dataindex].fk == false)
+                    this.tables[tableid].data[dataindex].pk = false
             }
         }
     },
