@@ -1,18 +1,18 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
-        <div @click.self="containerbox($event)" @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
-            <div @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-green-400 overflow-hidden overflow-y-auto absolute" :class="[table.top, table.left]" :id="['table-'+table.id]">
+        <div @click.self="containerbox($event)" @mousedown.self="mousedown($event)" @mousemove.self="mousemove($event)" @mouseleave.self="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
+            <div @mousedown="boxmousedown($event, table)" @mousemove="boxmousemove($event, table)" @mouseleave="table.drag.isDown = false" @mouseup="table.drag.isDown = false" @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-[#41bf82] overflow-hidden overflow-y-auto absolute" :class="[table.top, table.left]" :id="['table-'+table.id]">
                 <div class="flex justify-center">
                     <input v-model="table.title" class="p-1 mt-10 w-[70%]">
                 </div>
-                <h2 class="pt-[30px] ml-[20px] text-[25px]">Datas</h2>
+                <h2 class="pt-[30px] ml-[20px] text-[25px] text-white">Datas</h2>
                 <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
-                    <span class="mr-[10px]">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
-                    <span class="mr-[10px]">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
+                    <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
+                    <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
                     <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
-                    <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"></button>
+                    <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"><img src="../assets/trash.svg"></button>
                 </div>
-                <div class="m-[20px]" @click="addval(table.id)">Add data</div>
+                <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
             </div>
         </div>
     </div>
@@ -33,24 +33,10 @@ export default {
                scrollLeft: 0,
                scrollTop: 0,
            },
-           index: 1,
+           index: 0,
            link: false,
            tables: [
-               {
-                   id: 0,
-                   index: 1,
-                   title: "Title",
-                   top: "top-[100px]",
-                   left: "left-[100px]",
-                   data: [
-                       {
-                           index: 0,
-                           name: 'hello world',
-                           fk: false, 
-                           pk: false,
-                       }
-                   ]
-               }
+               
            ]
         }
     },
@@ -72,6 +58,15 @@ export default {
                    title: "Title",
                    top: 'top-['+e.offsetY+'px]',
                    left: 'left-['+e.offsetX+'px]',
+                   t: e.offsetY,
+                   l: e.offsetX,
+                   drag: {
+                        isDown: false,
+                        startX: 0,
+                        startY: 0,
+                        scrollLeft: 0,
+                        scrollTop: 0,
+                    },
                    data: [
                        {
                            index: 0,
@@ -122,6 +117,32 @@ export default {
                 element.scrollTop = this.drag.scrollTop - wy;
             }
         },
+        boxmousedown(e, table) {
+            e = e || window.event;
+            e.preventDefault();
+
+            table.drag.isDown = true
+
+            table.drag.startX = e.clientX;
+            table.drag.startY = e.clientY;
+        },
+        boxmousemove(e, table) {
+            if (table.drag.isDown) {
+                let x = table.drag.startX - e.clientX
+                let y = table.drag.startY - e.clientY
+
+                table.t -= y;
+                table.l -= x;
+
+                table.top = 'top-['+table.t+'px]'
+                table.left = 'left-['+table.l+'px]'
+
+                table.drag.startX = e.clientX
+                table.drag.startY = e.clientY
+
+                console.log(table.y)
+            }
+        },
         checkkeys(tableid, dataindex, type) {
             if (type === 0) {
                 if (this.tables[tableid].data[dataindex].pk == false)
@@ -158,10 +179,10 @@ export default {
             border: 0.25vw solid #000
             border-radius: 1vw
         .deldatabtn
-            background-image: url('../assets/trash.svg')   
-            background-repeat: no-repeat
             width: 30px
             height: 30px
-            bottom: -17.5px
+            top: 5px
             position: relative
+            img
+                filter: invert(100%)
 </style>
