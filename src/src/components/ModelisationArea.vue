@@ -1,18 +1,20 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
         <div @click.self="containerbox($event)" @mousedown.self="mousedown($event)" @mousemove.self="mousemove($event)" @mouseleave.self="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
-            <div @mousedown="boxmousedown($event, table)" @mousemove="boxmousemove($event, table)" @mouseleave="table.drag.isDown = false" @mouseup="table.drag.isDown = false" @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-[#41bf82] overflow-hidden overflow-y-auto absolute" :class="[table.top, table.left]" :id="['table-'+table.id]">
-                <div class="flex justify-center">
-                    <input v-model="table.title" class="p-1 mt-10 w-[70%]">
+            <div @mousemove="boxmousemove($event, table)" @mouseleave="table.drag.isDown = false" @mouseup="table.drag.isDown = false" @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-[#41bf82] overflow-hidden overflow-y-auto absolute" :class="[table.top, table.left]" :id="['table-'+table.id]">
+                <div class="w-[100%] h-[100%]" @mousedown="boxmousedown($event, table)">
+                    <div class="flex justify-center">
+                        <input v-model="table.title" class="p-1 mt-10 w-[70%]">
+                    </div>
+                    <h2 class="pt-[30px] ml-[20px] text-[25px] text-white">Datas</h2>
+                    <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
+                        <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
+                        <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
+                        <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
+                        <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"><img src="../assets/trash.svg"></button>
+                    </div>
+                    <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
                 </div>
-                <h2 class="pt-[30px] ml-[20px] text-[25px] text-white">Datas</h2>
-                <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
-                    <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
-                    <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
-                    <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
-                    <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"><img src="../assets/trash.svg"></button>
-                </div>
-                <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
             </div>
         </div>
     </div>
@@ -128,6 +130,7 @@ export default {
         },
         boxmousemove(e, table) {
             if (table.drag.isDown) {
+                e.preventDefault();
                 let x = table.drag.startX - e.clientX
                 let y = table.drag.startY - e.clientY
 
@@ -139,8 +142,6 @@ export default {
 
                 table.drag.startX = e.clientX
                 table.drag.startY = e.clientY
-
-                console.log(table.y)
             }
         },
         checkkeys(tableid, dataindex, type) {
