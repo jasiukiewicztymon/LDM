@@ -1,7 +1,7 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
-        <div @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
-            <div v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-green-400 overflow-hidden overflow-y-auto" :class="[table.top, table.left]" :id="['table-'+table.id]">
+        <div @click.self="containerbox($event)" @mousedown="mousedown($event)" @mousemove="mousemove($event)" @mouseleave="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
+            <div @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-green-400 overflow-hidden overflow-y-auto absolute" :class="[table.top, table.left]" :id="['table-'+table.id]">
                 <div class="flex justify-center">
                     <input v-model="table.title" class="p-1 mt-10 w-[70%]">
                 </div>
@@ -34,13 +34,14 @@ export default {
                scrollTop: 0,
            },
            index: 1,
+           link: false,
            tables: [
                {
                    id: 0,
                    index: 1,
                    title: "Title",
-                   top: "mt-[30px]",
-                   left: "ml-[100px]",
+                   top: "top-[100px]",
+                   left: "left-[100px]",
                    data: [
                        {
                            index: 0,
@@ -63,34 +64,33 @@ export default {
             })
             this.tables[id].index++;
         },
-        checkname() {
+        containerbox(e) {
             if (document.getElementById('plus-info').classList.contains('on')) {
-                document.getElementById('main-box').onmousedown = function(e) {
-                    let left = 'ml-['+e.offsetX+']', top = 'mt-['+e.offsetY+']'
-                    
-                    this.tables.push({
-                        id: this.index,
-                        index: 1,
-                        title: "Title",
-                        top: top,
-                        left: left,
-                        data: [
-                            {
-                                index: 0,
-                                name: 'hello world',
-                                fk: false, 
-                                pk: false,
-                            }
-                        ]
-                    })
-
-                    this.index++;
-                }
+                this.tables.push({
+                   id: this.index,
+                   index: 1,
+                   title: "Title",
+                   top: 'top-['+e.offsetY+'px]',
+                   left: 'left-['+e.offsetX+'px]',
+                   data: [
+                       {
+                           index: 0,
+                           name: 'hello world',
+                           fk: false, 
+                           pk: false,
+                       }
+                   ]
+               })
+               this.index++;
             }
-            else if (document.getElementById('trash-info').classList.contains('on')) {
-                console.log('2')
+        },
+        box(table) {
+            if (document.getElementById('trash-info').classList.contains('on')) {
+                this.tables.splice(this.tables.indexOf(table), 1)
             }
-            else if (document.getElementById('pencil-info').classList.contains('on')) {
+        },
+        checkname() {
+            if (document.getElementById('pencil-info').classList.contains('on')) {
                 console.log('3')
             }
             else if (document.getElementById('slash-lg-info').classList.contains('on')) {
