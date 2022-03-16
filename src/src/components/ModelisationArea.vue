@@ -1,7 +1,7 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
         <div @click.self="containerbox($event)" @mousedown.self="mousedown($event)" @mousemove.self="mousemove($event)" @mouseleave.self="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
-            <div @mousemove="boxmousemove($event, table)" @mouseup="table.drag.isDown = false" @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-[#41bf82] overflow-hidden overflow-y-auto absolute" :class="[table.top, table.left]" :id="['table-'+table.id]">
+            <div :style="{ top: table.t + 'px', left: table.l + 'px' }" @mousemove="boxmousemove($event, table)" @mouseleave="table.drag.isDown = false" @mouseup="table.drag.isDown = false" @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[450px] h-[550px] bg-[#41bf82] overflow-hidden overflow-y-auto absolute" :id="['table-'+table.id]">
                 <div class="w-[100%] h-[100%]" @mousedown="boxmousedown($event, table)">
                     <div class="flex justify-center">
                         <input v-model="table.title" class="p-1 mt-10 w-[70%]">
@@ -58,8 +58,6 @@ export default {
                    id: this.index,
                    index: 1,
                    title: "Title",
-                   top: 'top-['+e.offsetY+'px]',
-                   left: 'left-['+e.offsetX+'px]',
                    t: e.offsetY,
                    l: e.offsetX,
                    drag: {
@@ -78,6 +76,7 @@ export default {
                        }
                    ]
                })
+
                this.index++;
             }
         },
@@ -120,9 +119,6 @@ export default {
             }
         },
         boxmousedown(e, table) {
-            e = e || window.event;
-            e.preventDefault();
-
             table.drag.isDown = true
 
             table.drag.startX = e.clientX;
@@ -136,9 +132,6 @@ export default {
 
                 table.t -= y;
                 table.l -= x;
-
-                table.top = 'top-['+table.t+'px]'
-                table.left = 'left-['+table.l+'px]'
 
                 table.drag.startX = e.clientX
                 table.drag.startY = e.clientY
