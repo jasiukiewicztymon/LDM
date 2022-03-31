@@ -13,7 +13,7 @@
                         <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table.id, data.index, 2)">
                         <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
                         <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"><img src="../assets/trash.svg"></button>
-                        <div class="link"></div>
+                        <div class="link" @click.self="linktables(table.id, data.index)"></div>
                     </div>
                     <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
                 </div>
@@ -40,6 +40,7 @@ export default {
            },
            index: 0,
            link: false,
+           linkindex: [-1, -1],
            tables: [],
            link: [],
         }
@@ -52,7 +53,6 @@ export default {
                 fk: false,
                 pk: false,
                 uk: false,
-                fkp: [-1, -1]
             })
             this.tables[id].index++;
         },
@@ -78,7 +78,6 @@ export default {
                            fk: false, 
                            pk: false,
                            uk: false,
-                           fkp: [-1, -1]
                        }
                    ]
                })
@@ -169,10 +168,27 @@ export default {
                     this.tables[tableid].data[dataindex].uk = false;
                 }
             }
-        }
+        },
+        linktables(table, value) {
+            if (document.getElementById('slash-lg-info').classList.contains('on')) {
+                if (this.linkindex[0] == -1 && this.linkindex[1] == -1) {
+                    this.linkindex = {table, value}
+                }
+                else {
+                    
+                }
+            }
+        },
     },
     created() {
         window.addEventListener('load', this.replace);
+        setInterval(() => {
+            if (!document.getElementById('slash-lg-info').classList.contains('on')) {
+                this.linkindex[0] = -1
+                this.linkindex[1] = -1
+                console.log('reset')
+            }
+        })
     }
 }
 </script>
