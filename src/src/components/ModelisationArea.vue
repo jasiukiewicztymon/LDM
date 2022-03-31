@@ -13,7 +13,7 @@
                         <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table.id, data.index, 2)">
                         <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
                         <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"><img src="../assets/trash.svg"></button>
-                        <div class="link" @click.self="linktables(table.id, data.index)"></div>
+                        <div class="link" @click.self="linktables(table.id, data.index)" :id="['link-'+table.id+'-'+data.index]"></div>
                     </div>
                     <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
                 </div>
@@ -171,11 +171,30 @@ export default {
         },
         linktables(table, value) {
             if (document.getElementById('slash-lg-info').classList.contains('on')) {
-                if (this.linkindex[0] == -1 && this.linkindex[1] == -1) {
-                    this.linkindex = {table, value}
+                var exist = false;
+
+                for (var i = 0; i < this.link.length; i++) {
+                    if ((this.link[i][0][0] == table & this.link[i][0][1] == value) || (this.link[i][1][0] == table & this.link[i][1][1] == value)) {
+                        exist = true;
+                        break;
+                    }
                 }
-                else {
-                    
+
+                if (!exist) {
+                    if (this.linkindex[0] == -1 && this.linkindex[1] == -1) {
+                        this.linkindex = [table, value]
+                    }
+                    else {
+                        if (table != this.linkindex[0]) {
+                            this.link.push([[this.linkindex[0], this.linkindex[1]], [table, value]]);
+
+                            // draw the line
+                            var pkey = document.getElementById('link-'+table+'-'+value)
+                            var fkey = document.getElementById('link-'+this.linkindex[0]+'-'+this.linkindex[1])
+
+                            this.linkindex = [-1, -1]
+                        }
+                    }
                 }
             }
         },
@@ -186,7 +205,6 @@ export default {
             if (!document.getElementById('slash-lg-info').classList.contains('on')) {
                 this.linkindex[0] = -1
                 this.linkindex[1] = -1
-                console.log('reset')
             }
         })
     }
