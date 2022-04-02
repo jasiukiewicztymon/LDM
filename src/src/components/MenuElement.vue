@@ -2,19 +2,19 @@
     <nav class="h-[14vw] md:h-[10vw] lg:h-[7vw] w-screen fixed z-[2]">
         <h1 class="hidden lg:flex">Logical data models Generator</h1>
         <div id="tools" class="scale-125 lg:scale-100 right-[50%] translate-x-[50%] lg:translate-x-[0%] absolute lg:right-[2.5vw] top-[50%] -translate-y-[50%] flex">
-            <div @click="createTable" id="plus-info" class="before:content-['Add_a_table'] before:left-[-15%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
+            <div :class="{ on: this.newTable }" @click="createTable" id="plus-info" class="before:content-['Add_a_table'] before:left-[-15%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
                 <img src="../assets/plus.svg" id="svg-plus" class="mr-[4.5vw] lg:mr-[3.5vw] duration-500 scale-[200%] md:scale-[150%] lg:scale-[100%]">
             </div>
-            <div @click="deleteTable" id="trash-info" class="before:content-['Delete_a_table'] before:left-[-25%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
+            <div :class="{ on: this.delTable }" @click="deleteTable" id="trash-info" class="before:content-['Delete_a_table'] before:left-[-25%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
                 <img src="../assets/trash.svg" id="svg-trash" class="mr-[4.5vw] lg:mr-[3.5vw] duration-500 scale-[200%] md:scale-[150%] lg:scale-[100%] ">
             </div>
-            <div @click="editionTable" id="pencil-info" class="before:content-['Edit_a_table'] before:left-[-15%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
+            <div :class="{ on: this.editTable }" @click="editionTable" id="pencil-info" class="before:content-['Edit_a_table'] before:left-[-15%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
                 <img src="../assets/pencil.svg" id="svg-pencil" class="mr-[4.5vw] lg:mr-[3.5vw] duration-500 scale-[200%] md:scale-[150%] lg:scale-[100%] ">
             </div>
-            <div @click="linkingTable" id="slash-lg-info" class="before:content-['Link_tables'] before:left-[-15%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
+            <div :class="{ on: this.linkTable }" @click="linkingTable" id="slash-lg-info" class="before:content-['Link_tables'] before:left-[-15%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
                 <img src="../assets/slash-lg.svg" id="svg-slash-lg" class="mr-[4.5vw] lg:mr-[3.5vw] duration-500 scale-[200%] md:scale-[150%] lg:scale-[100%] ">
             </div>
-            <div @click="exportingTable" id="arrow-bar-up-info" class="before:content-['Export'] before:left-[-1%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
+            <div :class="{ on: this.exportTable }" @click="exportingTable" id="arrow-bar-up-info" class="before:content-['Export'] before:left-[-1%] before:hidden lg:hover:before:flex before:absolute before:text-[0.8vw]">
                 <img src="../assets/arrow-bar-up.svg" id="svg-arrow-bar-up" class="mr-[4.5vw] lg:mr-[3.5vw] duration-500 scale-[200%] md:scale-[150%] lg:scale-[100%] ">
             </div>
         </div>
