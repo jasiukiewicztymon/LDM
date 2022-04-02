@@ -223,6 +223,15 @@ export default {
 
                 var ax = p.left - m.left, ay = p.top - m.top, bx = f.left - m.left, by = f.top - m.top;
 
+                ay += 5, by += 5
+
+                if (ax > bx) {
+                    ax -= 430
+                }
+                else if (ax < bx) {
+                    bx -= 430
+                }
+
                 var length = Math.hypot(by-ay, bx-ax), deg = Math.atan2(by-ay, bx-ax) * 180 / Math.PI;
 
                 e.val = {
