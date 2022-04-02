@@ -1,6 +1,6 @@
 <template>
     <div @click="checkname" id="main-box" class="absolute left-[50%] overflow-auto -translate-x-[50%] top-[16vw] md:top-[12vw] lg:top-[9vw] w-[90vw] h-[82.5vh] lg:h-[75vh]">
-        <div @click.self="containerbox($event)" @mousedown.self="mousedown($event)" @mousemove.self="mousemove($event)" @mouseleave.self="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
+        <div id="mainboxset" @click.self="containerbox($event)" @mousedown.self="mousedown($event)" @mousemove.self="mousemove($event)" @mouseleave.self="this.drag.isDown = false" @mouseup="this.drag.isDown = false" :class="{active: this.drag.isDown}" class="w-[100000px] h-[100000px] p-[20px]">
             <div :style="{ top: table.t + 'px', left: table.l + 'px' }" @mousemove="boxmousemove($event, table)" @mouseleave="table.drag.isDown = false" @mouseup="table.drag.isDown = false" @click="box(table)" v-for="table in this.tables" :key="table.id" class="w-[485px] h-[550px] bg-[#41bf82] overflow-hidden overflow-y-auto absolute" :id="['table-'+table.id]">
                 <div class="w-[100%] h-[100%]" @mousedown="boxmousedown($event, table)">
                     <div class="flex justify-center">
@@ -18,6 +18,7 @@
                     <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
                 </div>
             </div>
+            <div class="linepf" v-for="link in this.link" :key="link.id" :id="['l-'+link.id]" :style="{ top: link.val.top, left: link.val.left, width: link.val.width, transform: 'rotate('+link.val.deg+'deg)' }"></div>
         </div>
     </div>
 </template>
@@ -25,7 +26,6 @@
 <script>
 /* eslint-disable */
 const axios = require('axios')
-
 export default {
     components: {
     },
@@ -42,6 +42,7 @@ export default {
            link: false,
            linkindex: [-1, -1],
            tables: [],
+           indexid: 0,
            link: [],
         }
     },
@@ -81,7 +82,6 @@ export default {
                        }
                    ]
                })
-
                this.index++;
             }
         },
@@ -92,10 +92,8 @@ export default {
         },
         checkname() {
             if (document.getElementById('pencil-info').classList.contains('on')) {
-                console.log('3')
             }
             else if (document.getElementById('arrow-bar-up-info').classList.contains('on')) {
-
             }
         },
         replace() {
@@ -104,7 +102,6 @@ export default {
         },
         mousedown(e) {
             let element = document.getElementById('main-box');
-
             this.drag.isDown = true;
             this.drag.startX = e.pageX - element.offsetLeft;
             this.drag.startY = e.pageY - element.offsetTop;
@@ -125,7 +122,6 @@ export default {
         },
         boxmousedown(e, table) {
             table.drag.isDown = true
-
             table.drag.startX = e.clientX;
             table.drag.startY = e.clientY;
         },
@@ -134,10 +130,8 @@ export default {
                 e.preventDefault();
                 let x = table.drag.startX - e.clientX
                 let y = table.drag.startY - e.clientY
-
                 table.t -= y;
                 table.l -= x;
-
                 table.drag.startX = e.clientX
                 table.drag.startY = e.clientY
             }
@@ -148,7 +142,6 @@ export default {
                     this.tables[tableid].data[dataindex].fk = false;
                     this.tables[tableid].data[dataindex].uk = false;
                 }
-
                 if (this.tables[tableid].data[dataindex].pk == false) {
                     for (let i = 0; i < this.tables[tableid].data.length; i++) {
                         if (i != dataindex)
@@ -186,13 +179,28 @@ export default {
                     }
                     else {
                         if (table != this.linkindex[0]) {
-                            this.link.push([[this.linkindex[0], this.linkindex[1]], [table, value]]);
-
-                            // draw the line
                             var pkey = document.getElementById('link-'+table+'-'+value)
                             var fkey = document.getElementById('link-'+this.linkindex[0]+'-'+this.linkindex[1])
 
+                            var mainbox = document.getElementById('mainboxset')
+
+                            this.link.push({
+                                pref: pkey,
+                                fref: fkey,
+                                id: this.indexid,
+                                mref: mainbox,
+                                val: {
+                                    width: 0,
+                                    left: 0,
+                                    top: 0,
+                                    deg: 0
+                                }
+                            })
+
+                            this.indexid++
                             this.linkindex = [-1, -1]
+
+                            console.log(this.link)
                         }
                     }
                 }
@@ -207,13 +215,30 @@ export default {
                 this.linkindex[1] = -1
             }
         })
+        setInterval(() => {
+            this.link.forEach(e => {
+                var l = document.getElementById('l-'+e.id)
+
+                var p = e.pref.getBoundingClientRect(), f = e.fref.getBoundingClientRect(), m = e.mref.getBoundingClientRect()
+
+                var ax = p.left - m.left, ay = p.top - m.top, bx = f.left - m.left, by = f.top - m.top;
+
+                var length = Math.hypot(by-ay, bx-ax), deg = Math.atan2(by-ay, bx-ax) * 180 / Math.PI;
+
+                e.val = {
+                    width: length + "px",
+                    left: ax + "px",
+                    top: ay + "px",
+                    deg: deg
+                }
+            });
+        })
     }
 }
 </script>
 
 <style lang="sass" scoped>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap')
-
     $boxbg: #262626
     $text: #fff
     $fontglobal: 'Open Sans', sans-serif
@@ -239,4 +264,11 @@ export default {
             position: relative
             top: -24px
             left: 425px
+        .linepf
+            position: absolute
+            background: #000
+            opacity: 1,
+            height: 2px
+            transform-origin: left 50%
+            z-index: -1
 </style>
