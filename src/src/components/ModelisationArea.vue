@@ -25,7 +25,6 @@
 
 <script>
 /* eslint-disable */
-const axios = require('axios')
 export default {
     components: {
     },
@@ -61,7 +60,7 @@ export default {
             if (document.getElementById('plus-info').classList.contains('on')) {
                 this.tables.push({
                    id: this.index,
-                   index: 1,
+                   index: 0,
                    title: "Title",
                    t: e.offsetY,
                    l: e.offsetX,
