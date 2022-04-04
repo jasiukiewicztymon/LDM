@@ -43,6 +43,7 @@ export default {
            tables: [],
            indexid: 0,
            link: [],
+           nl: []
         }
     },
     methods: {
@@ -55,12 +56,13 @@ export default {
                 uk: false,
             })
             this.tables[id].index++;
+            console.log(this.tables[id].index)
         },
         containerbox(e) {
             if (document.getElementById('plus-info').classList.contains('on')) {
                 this.tables.push({
                    id: this.index,
-                   index: 0,
+                   index: 1,
                    title: "Title",
                    t: e.offsetY,
                    l: e.offsetX,
@@ -86,7 +88,14 @@ export default {
         },
         box(table) {
             if (document.getElementById('trash-info').classList.contains('on')) {
-                this.tables.splice(this.tables.indexOf(table), 1)
+                var id = this.tables.indexOf(table);
+                this.link.forEach(e => {
+                    if (e.tfid != table.id && e.tpid != table.id)
+                        this.nl.push(e)
+                })
+                this.link = this.nl
+                this.nl = []
+                this.tables.splice(id, 1)
             }
         },
         checkname() {
@@ -165,12 +174,14 @@ export default {
             if (document.getElementById('slash-lg-info').classList.contains('on')) {
                 var exist = false;
 
-                for (var i = 0; i < this.link.length; i++) {
-                    if ((this.link[i][0][0] == table & this.link[i][0][1] == value) || (this.link[i][1][0] == table & this.link[i][1][1] == value)) {
+                this.link.forEach(e => {
+                    if ((e.tpid == table && e.vpid == value) || (e.tfid == table && e.vfid == value)) {
+                        console.log(e)
+                        console.log(table)
+                        console.log(value)
                         exist = true;
-                        break;
                     }
-                }
+                })
 
                 if (!exist) {
                     if (this.linkindex[0] == -1 && this.linkindex[1] == -1) {
@@ -186,6 +197,10 @@ export default {
                             this.link.push({
                                 pref: pkey,
                                 fref: fkey,
+                                tpid: table,
+                                tfid: this.linkindex[0],
+                                vpid: value,
+                                vfid: this.linkindex[1],
                                 id: this.indexid,
                                 mref: mainbox,
                                 val: {
@@ -200,6 +215,9 @@ export default {
                             this.linkindex = [-1, -1]
 
                             console.log(this.link)
+                        }
+                        else {
+                            this.linkindex = [-1, -1]
                         }
                     }
                 }
