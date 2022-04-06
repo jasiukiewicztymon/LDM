@@ -8,14 +8,14 @@
                     </div>
                     <h2 class="pt-[30px] ml-[20px] text-[25px] text-white">Datas</h2>
                     <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
-                        <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table.id, data.index, 0)">
-                        <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table.id, data.index, 1)">
-                        <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table.id, data.index, 2)">
+                        <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table, data.index, 0)">
+                        <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table, data.index, 1)">
+                        <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table, data.index, 2)">
                         <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
-                        <button class="deldatabtn" @click="this.tables[table.id].data.length > 1 ? this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 1) : this.tables[table.id].data.splice(this.tables[table.id].data.indexOf(data), 0)"><img src="../assets/trash.svg"></button>
-                        <div class="link" @click.self="linktables(table.id, data.index)" :id="['link-'+table.id+'-'+data.index]"></div>
+                        <button class="deldatabtn" @click="delval(table, data)"><img src="../assets/trash.svg"></button>
+                        <div class="link" @click.self="linktables(table, data.index)" :id="['link-'+table.id+'-'+data.index]"></div>
                     </div>
-                    <div class="m-[20px] text-white" @click="addval(table.id)">Add data</div>
+                    <div class="p-[20px] text-white" @click="addval(table)">Add data</div>
                 </div>
             </div>
             <div class="linepf" v-for="link in this.link" :key="link.id" :id="['l-'+link.id]" :style="{ top: link.val.top, left: link.val.left, width: link.val.width, transform: 'rotate('+link.val.deg+'deg)' }"></div>
@@ -47,16 +47,33 @@ export default {
         }
     },
     methods: {
-        addval(id) {
-            this.tables[id].data.push({
-                index: this.tables[id].index,
+        delval(t, data) {
+            if (t.data.length > 1) {
+                var tableid = t.id;
+
+                // delete all the links with this value
+
+                this.link.forEach(e => {
+                    if ((e.tpid != tableid && e.vpid != data.index) || (e.tfid != tableid && e.vfid != data.index)) {
+                        this.nl.push(e)
+                    }
+                })
+
+                t.data.splice(t.data.indexOf(data), 1)
+
+                this.link = this.nl
+                this.nl = []
+            } 
+        },
+        addval(t) {
+            t.data.push({
+                index: t.index,
                 name: '',
                 fk: false,
                 pk: false,
                 uk: false,
             })
-            this.tables[id].index++;
-            console.log(this.tables[id].index)
+            t.index++;
         },
         containerbox(e) {
             if (document.getElementById('plus-info').classList.contains('on')) {
@@ -73,7 +90,7 @@ export default {
                         scrollLeft: 0,
                         scrollTop: 0,
                     },
-                   data: [
+                    data: [
                        {
                            index: 0,
                            name: 'hello world',
@@ -83,19 +100,20 @@ export default {
                        }
                    ]
                })
+               console.log(this.index)
                this.index++;
             }
         },
         box(table) {
             if (document.getElementById('trash-info').classList.contains('on')) {
-                var id = this.tables.indexOf(table);
                 this.link.forEach(e => {
                     if (e.tfid != table.id && e.tpid != table.id)
                         this.nl.push(e)
                 })
                 this.link = this.nl
                 this.nl = []
-                this.tables.splice(id, 1)
+                this.tables.splice(this.tables.indexOf(table), 1)
+                console.log(this.tables)
             }
         },
         checkname() {
@@ -144,46 +162,58 @@ export default {
                 table.drag.startY = e.clientY
             }
         },
-        checkkeys(tableid, dataindex, type) {
+        checkkeys(t, dataindex, type) {
+            console.log(t)
+            console.log(dataindex)
+            console.log(type)
             if (type === 0) {
-                if (this.tables[tableid].data[dataindex].pk == false) {
-                    this.tables[tableid].data[dataindex].fk = false;
-                    this.tables[tableid].data[dataindex].uk = false;
+                if (t.data[dataindex].pk == false) {
+                    t.data[dataindex].fk = false;
+                    t.data[dataindex].uk = false;
                 }
-                if (this.tables[tableid].data[dataindex].pk == false) {
-                    for (let i = 0; i < this.tables[tableid].data.length; i++) {
+                if (t.data[dataindex].pk == false) {
+                    for (let i = 0; i < t.data.length; i++) {
                         if (i != dataindex)
-                            this.tables[tableid].data[i].pk = false
+                            t.data[i].pk = false
                     }
                 }
             }
             else if (type === 2) {
-                if (this.tables[tableid].data[dataindex].uk == false) {
-                    this.tables[tableid].data[dataindex].pk = false;
-                    this.tables[tableid].data[dataindex].fk = false;
+                if (t.data[dataindex].uk == false) {
+                    t.data[dataindex].pk = false;
+                    t.data[dataindex].fk = false;
                 }
+
+                // delete all the links with this value
+
+                this.link.forEach(e => {
+                    if ((e.tpid != tableid && e.vpid != dataindex) || (e.tfid != tableid && e.vfid != dataindex)) {
+                        this.nl.push(e)
+                    }
+                })
+
+                this.link = this.nl
+                this.nl = []
             }
             else {
-                if (this.tables[tableid].data[dataindex].fk == false) {
-                    this.tables[tableid].data[dataindex].pk = false;
-                    this.tables[tableid].data[dataindex].uk = false;
+                if (t.data[dataindex].fk == false) {
+                    t.data[dataindex].pk = false;
+                    t.data[dataindex].uk = false;
                 }
             }
         },
-        linktables(table, value) {
+        linktables(t, value) {
+            var table = t.id;
             if (document.getElementById('slash-lg-info').classList.contains('on')) {
                 var exist = false;
 
                 this.link.forEach(e => {
                     if ((e.tpid == table && e.vpid == value) || (e.tfid == table && e.vfid == value)) {
-                        console.log(e)
-                        console.log(table)
-                        console.log(value)
                         exist = true;
                     }
                 })
 
-                if (!exist) {
+                if (!exist && (this.tables[table].data[value].pk == true || this.tables[table].data[value].fk == true)) {
                     if (this.linkindex[0] == -1 && this.linkindex[1] == -1) {
                         this.linkindex = [table, value]
                     }
