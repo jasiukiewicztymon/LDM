@@ -8,12 +8,12 @@
                     </div>
                     <h2 class="pt-[30px] ml-[20px] text-[25px] text-white">Datas</h2>
                     <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
-                        <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table, data.index, 0)">
-                        <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table, data.index, 1)">
-                        <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table, data.index, 2)">
+                        <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table, data, 0)">
+                        <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table, data, 1)">
+                        <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table, data, 2)">
                         <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
                         <button class="deldatabtn" @click="delval(table, data)"><img src="../assets/trash.svg"></button>
-                        <div class="link" @click.self="linktables(table, data.index)" :id="['link-'+table.id+'-'+data.index]"></div>
+                        <div class="link" @click.self="linktables(table, data)" :id="['link-'+table.id+'-'+data.index]"></div>
                     </div>
                     <div class="p-[20px] text-white" @click="addval(table)">Add data</div>
                 </div>
@@ -49,12 +49,8 @@ export default {
     methods: {
         delval(t, data) {
             if (t.data.length > 1) {
-                var tableid = t.id;
-
-                // delete all the links with this value
-
                 this.link.forEach(e => {
-                    if ((e.tpid != tableid && e.vpid != data.index) || (e.tfid != tableid && e.vfid != data.index)) {
+                    if ((e.tpid != t.id && e.vpid != data.index) || (e.tfid != t.id && e.vfid != data.index)) {
                         this.nl.push(e)
                     }
                 })
@@ -66,6 +62,7 @@ export default {
             } 
         },
         addval(t) {
+            // ✔
             t.data.push({
                 index: t.index,
                 name: '',
@@ -76,6 +73,7 @@ export default {
             t.index++;
         },
         containerbox(e) {
+            // ✔
             if (document.getElementById('plus-info').classList.contains('on')) {
                 this.tables.push({
                    id: this.index,
@@ -100,11 +98,11 @@ export default {
                        }
                    ]
                })
-               console.log(this.index)
                this.index++;
             }
         },
         box(table) {
+            // ✔
             if (document.getElementById('trash-info').classList.contains('on')) {
                 this.link.forEach(e => {
                     if (e.tfid != table.id && e.tpid != table.id)
@@ -113,7 +111,6 @@ export default {
                 this.link = this.nl
                 this.nl = []
                 this.tables.splice(this.tables.indexOf(table), 1)
-                console.log(this.tables)
             }
         },
         checkname() {
@@ -163,31 +160,29 @@ export default {
             }
         },
         checkkeys(t, dataindex, type) {
-            console.log(t)
-            console.log(dataindex)
-            console.log(type)
+            // ✔
             if (type === 0) {
-                if (t.data[dataindex].pk == false) {
-                    t.data[dataindex].fk = false;
-                    t.data[dataindex].uk = false;
+                if (t.data[t.data.indexOf(dataindex)].pk == false) {
+                    t.data[t.data.indexOf(dataindex)].fk = false;
+                    t.data[t.data.indexOf(dataindex)].uk = false;
                 }
-                if (t.data[dataindex].pk == false) {
+                if (t.data[t.data.indexOf(dataindex)].pk == false) {
                     for (let i = 0; i < t.data.length; i++) {
-                        if (i != dataindex)
+                        if (i != t.data.indexOf(dataindex))
                             t.data[i].pk = false
                     }
                 }
             }
             else if (type === 2) {
-                if (t.data[dataindex].uk == false) {
-                    t.data[dataindex].pk = false;
-                    t.data[dataindex].fk = false;
+                if (t.data[t.data.indexOf(dataindex)].uk == false) {
+                    t.data[t.data.indexOf(dataindex)].pk = false;
+                    t.data[t.data.indexOf(dataindex)].fk = false;
                 }
 
                 // delete all the links with this value
 
                 this.link.forEach(e => {
-                    if ((e.tpid != tableid && e.vpid != dataindex) || (e.tfid != tableid && e.vfid != dataindex)) {
+                    if ((e.tpid != t.id && e.vpid != t.data.indexOf(dataindex)) || (e.tfid != t.id && e.vfid != t.data.indexOf(dataindex))) {
                         this.nl.push(e)
                     }
                 })
@@ -196,14 +191,15 @@ export default {
                 this.nl = []
             }
             else {
-                if (t.data[dataindex].fk == false) {
-                    t.data[dataindex].pk = false;
-                    t.data[dataindex].uk = false;
+                if (t.data[t.data.indexOf(dataindex)].fk == false) {
+                    t.data[t.data.indexOf(dataindex)].pk = false;
+                    t.data[t.data.indexOf(dataindex)].uk = false;
                 }
             }
         },
-        linktables(t, value) {
-            var table = t.id;
+        linktables(t, v) {
+            // ✔
+            var table = t.id, value = t.data.indexOf(v);
             if (document.getElementById('slash-lg-info').classList.contains('on')) {
                 var exist = false;
 
@@ -243,8 +239,6 @@ export default {
 
                             this.indexid++
                             this.linkindex = [-1, -1]
-
-                            console.log(this.link)
                         }
                         else {
                             this.linkindex = [-1, -1]
