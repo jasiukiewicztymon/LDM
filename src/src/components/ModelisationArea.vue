@@ -170,35 +170,52 @@ export default {
                 if (t.data[t.data.indexOf(dataindex)].pk == false) {
                     t.data[t.data.indexOf(dataindex)].fk = false;
                     t.data[t.data.indexOf(dataindex)].uk = false;
-                }
-                if (t.data[t.data.indexOf(dataindex)].pk == false) {
+
                     for (let i = 0; i < t.data.length; i++) {
                         if (i != t.data.indexOf(dataindex))
                             t.data[i].pk = false
                     }
+                }
+                else {
+                    this.link.forEach(e => {
+                        if ((e.tpid != t.id && e.vpid != t.data.indexOf(dataindex)) || (e.tfid != t.id && e.vfid != t.data.indexOf(dataindex))) {
+                            this.nl.push(e)
+                        }
+                    })
+
+                    this.link = this.nl
+                    this.nl = []
                 }
             }
             else if (type === 2) {
                 if (t.data[t.data.indexOf(dataindex)].uk == false) {
                     t.data[t.data.indexOf(dataindex)].pk = false;
                     t.data[t.data.indexOf(dataindex)].fk = false;
+                
+                    this.link.forEach(e => {
+                        if ((e.tpid != t.id && e.vpid != t.data.indexOf(dataindex)) || (e.tfid != t.id && e.vfid != t.data.indexOf(dataindex))) {
+                            this.nl.push(e)
+                        }
+                    })
+
+                    this.link = this.nl
+                    this.nl = []
                 }
-
-                // delete all the links with this value
-
-                this.link.forEach(e => {
-                    if ((e.tpid != t.id && e.vpid != t.data.indexOf(dataindex)) || (e.tfid != t.id && e.vfid != t.data.indexOf(dataindex))) {
-                        this.nl.push(e)
-                    }
-                })
-
-                this.link = this.nl
-                this.nl = []
             }
             else {
                 if (t.data[t.data.indexOf(dataindex)].fk == false) {
                     t.data[t.data.indexOf(dataindex)].pk = false;
                     t.data[t.data.indexOf(dataindex)].uk = false;
+                }
+                else {
+                    this.link.forEach(e => {
+                        if ((e.tpid != t.id && e.vpid != t.data.indexOf(dataindex)) || (e.tfid != t.id && e.vfid != t.data.indexOf(dataindex))) {
+                            this.nl.push(e)
+                        }
+                    })
+
+                    this.link = this.nl
+                    this.nl = []
                 }
             }
         },
