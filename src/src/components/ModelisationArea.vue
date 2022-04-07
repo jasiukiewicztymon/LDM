@@ -204,7 +204,6 @@ export default {
         },
         linktables(t, v, id) {
             var table = t.id, value = t.data.indexOf(v);
-            console.log('link-'+table+'-'+id)
             if (document.getElementById('slash-lg-info').classList.contains('on')) {
                 var exist = false;
 
@@ -225,32 +224,15 @@ export default {
 
                             var mainbox = document.getElementById('mainboxset')
 
-                            console.log({
-                                pref: pkey,
-                                fref: fkey,
-                                tpid: table,
-                                tfid: this.linkindex[0],
-                                vpid: value,
-                                vfid: this.linkindex[1],
-                                id: this.indexid,
-                                mref: mainbox,
-                                val: {
-                                    width: 0,
-                                    left: 0,
-                                    top: 0,
-                                    deg: 0
-                                }
-                            })
-
                             this.link.push({
                                 pref: pkey,
                                 fref: fkey,
-                                tpid: table,
-                                tfid: this.linkindex[0],
-                                vpid: id,
-                                vfid: this.linkindex[1],
-                                id: this.indexid,
-                                mref: mainbox,
+                                tpid: ref(table),
+                                tfid: ref(this.linkindex[0]),
+                                vpid: ref(id),
+                                vfid: ref(this.linkindex[1]),
+                                id: ref(this.indexid),
+                                mref: ref(mainbox),
                                 val: {
                                     width: 0,
                                     left: 0,
@@ -280,6 +262,8 @@ export default {
         })
         setInterval(() => {
             this.link.forEach(e => {
+                e.pref = document.getElementById('link-'+e.tpid+'-'+e.vpid)
+                e.fref = document.getElementById('link-'+e.tfid+'-'+e.vfid)
                 var l = document.getElementById('l-'+e.id)
 
                 var p = e.pref.getBoundingClientRect(), f = e.fref.getBoundingClientRect(), m = e.mref.getBoundingClientRect()
@@ -303,6 +287,8 @@ export default {
                     top: ay + "px",
                     deg: deg
                 }
+
+                p = null, f = null, m = null;
             });
         })
     }
