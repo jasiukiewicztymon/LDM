@@ -7,13 +7,13 @@
                         <input v-model="table.title" class="p-1 mt-10 w-[70%]">
                     </div>
                     <h2 class="pt-[30px] ml-[20px] text-[25px] text-white">Datas</h2>
-                    <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.index+'-'+table.id]">
+                    <div v-for="data in table.data" :key="data.id" class="ml-[20px] pt-3 mb-[5px]" :id="['box-'+data.indexs+'-'+table.id]">
                         <span class="mr-[10px] text-white">PK</span><input type="checkbox" class="mr-[10px]" v-model="data.pk" @click="checkkeys(table, data, 0)">
                         <span class="mr-[10px] text-white">FK</span><input type="checkbox" class="mr-[10px]" v-model="data.fk" @click="checkkeys(table, data, 1)">
                         <span class="mr-[10px] text-white">UK</span><input type="checkbox" class="mr-[10px]" v-model="data.uk" @click="checkkeys(table, data, 2)">
                         <input v-model="data.name" class="p-1 w-[200px] content-input mr-[40px]">
-                        <button class="deldatabtn" @click="delval(table, data)"><img src="../assets/trash.svg"></button>
-                        <div class="link" @click.self="linktables(table, data)" :id="['link-'+table.id+'-'+data.index]"></div>
+                        <button class="deldatabtn" @click="delval(table, data, data.indexs)"><img src="../assets/trash.svg"></button>
+                        <div class="link" @click="linktables(table, data, data.indexs)" :id="['link-'+table.id+'-'+data.indexs]"></div>
                     </div>
                     <div class="p-[20px] text-white" @click="addval(table)">Add data</div>
                 </div>
@@ -25,6 +25,8 @@
 
 <script>
 /* eslint-disable */
+import { ref } from 'vue'
+
 export default {
     components: {
     },
@@ -47,29 +49,31 @@ export default {
         }
     },
     methods: {
-        delval(t, data) {
+        delval(t, data, id) {
+            console.log('⚠ : ' + t.id + ", " + data.indexs + "\n")
             if (t.data.length > 1) {
                 this.link.forEach(e => {
-                    if ((e.tpid != t.id && e.vpid != data.index) || (e.tfid != t.id && e.vfid != data.index)) {
+                    console.log("💫:\n" + e.tpid + ": " + t.id + "\n" + e.vpid + ": " + data.indexs + "\n" + e.tfid + ": " + t.id + "\n" + e.vfid + ": " + data.indexs)
+                    if (!((e.tpid == t.id && e.vpid == data.indexs) || (e.tfid == t.id && e.vfid == data.indexs))) {
                         this.nl.push(e)
                     }
                 })
-
-                t.data.splice(t.data.indexOf(data), 1)
-
                 this.link = this.nl
                 this.nl = []
+
+                t.data.splice(t.data.indexOf(data), 1)
             } 
         },
         addval(t) {
             // ✔
             t.data.push({
-                index: t.index,
+                indexs: ref(t.index),
                 name: '',
                 fk: false,
                 pk: false,
                 uk: false,
             })
+            console.log('💢 : ' + t.index)
             t.index++;
         },
         containerbox(e) {
@@ -90,7 +94,7 @@ export default {
                     },
                     data: [
                        {
-                           index: 0,
+                           indexs: ref(0),
                            name: 'hello world',
                            fk: false, 
                            pk: false,
@@ -98,6 +102,7 @@ export default {
                        }
                    ]
                })
+               console.log('💥 : ' + this.index)
                this.index++;
             }
         },
@@ -197,9 +202,9 @@ export default {
                 }
             }
         },
-        linktables(t, v) {
-            // ✔
+        linktables(t, v, id) {
             var table = t.id, value = t.data.indexOf(v);
+            console.log('link-'+table+'-'+id)
             if (document.getElementById('slash-lg-info').classList.contains('on')) {
                 var exist = false;
 
@@ -211,21 +216,38 @@ export default {
 
                 if (!exist && (this.tables[table].data[value].pk == true || this.tables[table].data[value].fk == true)) {
                     if (this.linkindex[0] == -1 && this.linkindex[1] == -1) {
-                        this.linkindex = [table, value]
+                        this.linkindex = [table, id]
                     }
                     else {
                         if (table != this.linkindex[0]) {
-                            var pkey = document.getElementById('link-'+table+'-'+value)
+                            var pkey = document.getElementById('link-'+table+'-'+id)
                             var fkey = document.getElementById('link-'+this.linkindex[0]+'-'+this.linkindex[1])
 
                             var mainbox = document.getElementById('mainboxset')
+
+                            console.log({
+                                pref: pkey,
+                                fref: fkey,
+                                tpid: table,
+                                tfid: this.linkindex[0],
+                                vpid: value,
+                                vfid: this.linkindex[1],
+                                id: this.indexid,
+                                mref: mainbox,
+                                val: {
+                                    width: 0,
+                                    left: 0,
+                                    top: 0,
+                                    deg: 0
+                                }
+                            })
 
                             this.link.push({
                                 pref: pkey,
                                 fref: fkey,
                                 tpid: table,
                                 tfid: this.linkindex[0],
-                                vpid: value,
+                                vpid: id,
                                 vfid: this.linkindex[1],
                                 id: this.indexid,
                                 mref: mainbox,
